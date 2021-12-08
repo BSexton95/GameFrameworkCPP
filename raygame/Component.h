@@ -11,7 +11,7 @@ public:
 	Actor* getOwner() { return m_owner; }
 
 	virtual void start();
-	virtual void update();
+	virtual void update(float deltaTime);
 	virtual void draw();
 	virtual void end();
 

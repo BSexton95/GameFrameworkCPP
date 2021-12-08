@@ -6,11 +6,15 @@ Component::Component(Actor* owner, const char* componentName)
 	m_name = componentName;
 }
 
+Component::~Component()
+{
+}
+
 void Component::start()
 {
 }
 
-void Component::update()
+void Component::update(float deltaTime)
 {
 }
 

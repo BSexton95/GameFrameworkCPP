@@ -63,31 +63,38 @@ bool Actor::checkForCollision(Actor* other)
 
 Component* Actor::addComponent(Component* component)
 {
-    //Create a new array with a size one greater than our old array
-    Component** appendedArray = new Component * [m_componentCount + 1];
+    //If the component is null then return before running any other logic
+    if (!component)
+        return nullptr;
 
-    //Copy the values from the old array to the new array
+    //Create a new temporary array that one size larger than the original
+    Component** tempArray = new Component*[m_componentCount + 1];
+
+    //Copy values from old array into new array
     for (int i = 0; i < m_componentCount; i++)
     {
-        appendedArray[i] = m_component[i];
+        tempArray[i] = m_component[i];
     }
 
-    //Set the last value in the new array to be the component we want to add
-    appendedArray[m_componentCount] = component;
-    //Set old array to hold the values of the new array
-    m_component = appendedArray;
+    //Sets the component at the new index to be the component passed in
+    tempArray[m_componentCount] = component;
+
+    //Set the old array to the tmeporary array
+    m_component = tempArray;
     m_componentCount++;
+
+    return component;
 }
 
 bool Actor::removeComponent(Component* component)
 {
-    //Check to see if the actor was null
+    //Check to see if the component was null
     if (!component)
     {
         return false;
     }
 
-    bool actorRemoved = false;
+    bool componentRemoved = false;
 
     //Create a new array with a size one less than our old array
     Component** newArray = new Component* [m_componentCount - 1];
@@ -104,17 +111,17 @@ bool Actor::removeComponent(Component* component)
         }
         else
         {
-            actorRemoved = true;
+            componentRemoved = true;
         }
     }
     //Set the old array to the new array
-    if (actorRemoved)
+    if (componentRemoved)
     {
         m_component = newArray;
         m_componentCount--;
     }
     //Return whether or not the removal was successful
-    return actorRemoved;
+    return componentRemoved;
 }
 
 bool Actor::removeComponent(const char* componentName)
@@ -125,10 +132,10 @@ bool Actor::removeComponent(const char* componentName)
         return false;
     }
 
-    bool actorRemoved = false;
+    bool componentRemoved = false;
 
     //Create a new array with a size one less than our old array 
-    Component** newArray = new Component * [m_componentCount - 1];
+    Component** newArray = new Component*[m_componentCount - 1];
     //Create variable to access tempArray index
     int j = 0;
     //Copy values from the old array to the new array
@@ -144,22 +151,23 @@ bool Actor::removeComponent(const char* componentName)
         else
         {
             delete m_component[i];
-            actorRemoved = true;
+            componentRemoved = true;
         }
     }
 
     //Set the old array to be the tempArray
     m_component = newArray;
     m_componentCount--;
-    return actorRemoved;
+    return componentRemoved;
 }
 
 Component* Actor::getComponent(const char* componentName)
 {
     for (int i = 0; i < m_componentCount; i++)
     {
-        if (componentName != m_component[i]->getName())
-            return nullptr;
+        if (componentName == m_component[i]->getName())
+            return m_component[i];
     }
 
+    return nullptr;
 }

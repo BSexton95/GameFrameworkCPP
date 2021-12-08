@@ -106,7 +106,7 @@ int Engine::addScene(Scene* scene)
 		return -1;
 
 	//Create a new temporary array that one size larger than the original
-	Scene** tempArray = new Scene * [m_sceneCount + 1];
+	Scene** tempArray = new Scene*[m_sceneCount + 1];
 
 	//Copy values from old array into new array
 	for (int i = 0; i < m_sceneCount; i++)
