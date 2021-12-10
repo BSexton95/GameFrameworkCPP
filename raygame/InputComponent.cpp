@@ -7,4 +7,6 @@ void InputComponent::update(float deltaTime)
 				 +(int)(IsKeyDown(KEY_D));
 	yDirection = -(int)(IsKeyDown(KEY_W))
 				 + (int)(IsKeyDown(KEY_S));
+
+	moveDirection = MathLibrary::Vector2(xDirection, yDirection);
 }

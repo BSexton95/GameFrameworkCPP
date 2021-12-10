@@ -1,15 +1,19 @@
 #include "moveComponent.h"
 #include "Transform2D.h"
+#include "Actor.h"
 
-moveComponent::moveComponent() : Component :: Component()
+moveComponent::moveComponent()
+	:Component::Component()
 {
 	
 }
 
+void moveComponent::setVelocity(Vector2 velocity)
+{
+	velocity = m_velocity;
+}
+
 void moveComponent::update(float deltaTime)
 {
-	m_velocity = ownerPosition.getNormalized() * m_speed * deltaTime;
-
-	getOwner() += m_velocity;
-	
+	getOwner()->getTransform()->getLocalPosition() = m_velocity + getOwner()->getTransform()->getLocalPosition();
 }
