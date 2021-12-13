@@ -14,6 +14,5 @@ private:
 	int xDirection;
 	int yDirection;
 	MathLibrary::Vector2(moveDirection);
-	Key
 };
 

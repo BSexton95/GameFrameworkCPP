@@ -16,4 +16,5 @@ void moveComponent::setVelocity(Vector2 velocity)
 void moveComponent::update(float deltaTime)
 {
 	getOwner()->getTransform()->getLocalPosition() = m_velocity + getOwner()->getTransform()->getLocalPosition();
+
 }
