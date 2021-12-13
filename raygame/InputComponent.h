@@ -7,12 +7,15 @@ class InputComponent :
 	public Component
 {
 public:
-	void update(float deltaTime);
-	Vector2 getMoveAxis();
+
+	InputComponent(const char* name = "InputComponent") : Component::Component(name) {}
+
+	MathLibrary::Vector2 getMoveAxis();
 
 private:
-	int xDirection;
-	int yDirection;
-	MathLibrary::Vector2(moveDirection);
+	RAYLIB_H::KeyboardKey m_action1Key = RAYLIB_H::KeyboardKey::KEY_SPACE;
+	RAYLIB_H::KeyboardKey m_action2Key = RAYLIB_H::KeyboardKey::KEY_P;
+	RAYLIB_H::KeyboardKey m_submitKey = RAYLIB_H::KeyboardKey::KEY_ENTER;
+	RAYLIB_H::KeyboardKey m_deleteKey = RAYLIB_H::KeyboardKey::KEY_BACKSPACE;
 };
 
