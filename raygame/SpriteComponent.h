@@ -1,19 +1,29 @@
 #pragma once
 #include "Component.h"
+class Texture2D;
 
 class SpriteComponent :
 	public Component
 {
 public:
-	SpriteComponent(const char* path);
-	int getWidth() { return m_width; }
+	/// <param name="texture">Sets the sprites image to be this textrue</param>
+	/// <param name="name">The name of the component instance</param>
+	SpriteComponent(Texture2D* texture, const char* name = "SpriteComponent");
+
+	/// <param name="path">The path of the textrue to load</param>
+	/// <param name="name"The name of the component instance></param>
+	SpriteComponent(const char* path, const char* name = "SpriteComponent");
+	 
+	~SpriteComponent() override;
+
 	int getHeight() { return m_height; }
-	void draw(MathLibrary::Matrix3(transform));
+	int getWidth() { return m_width; }
+
+	void draw() override;
 
 private:
-	Texture2D m_texture;
+	Texture2D* m_texture;
 	int m_width;
 	int m_height;
-	float m_rotation;
 };
 

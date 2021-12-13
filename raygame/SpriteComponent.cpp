@@ -1,30 +1,53 @@
 #include "SpriteComponent.h"
-#include <Matrix3.h>
-#include "Transform2D.h"
 #include "raylib.h"
-#include <math.h>
+#include "Actor.h"
+#include "Transform2D.h"
+#include <Matrix3.h>
+#include <cmath>
 
-SpriteComponent::SpriteComponent(const char* path)
+
+SpriteComponent::SpriteComponent(Texture2D* texture, const char* name) : Component::Component(name)
 {
-	m_texture = LoadTexture(path);
+	m_texture = texture;
 }
 
-void SpriteComponent::draw(MathLibrary::Matrix3(transform))
+SpriteComponent::SpriteComponent(const char* path, const char* name) : Component::Component(name)
 {
-	//Finds the scale of the sprite
-	m_width = new MathLibrary::Vector2(transform.m00, transform.m10)->getMagnitude();
-	m_height = new MathLibrary::Vector2(transform.m01, transform.m11)->getMagnitude();
+	m_texture = new Texture2D(RAYLIB_H::LoadTexture(path));
+}
+
+SpriteComponent::~SpriteComponent()
+{
+	RAYLIB_H::UnloadTexture(*m_texture);
+	delete m_texture;
+}
+
+void SpriteComponent::draw()
+{
+	//Get the scale of the global matrix
+	m_width = getOwner()->getTransform()->getScale().x;
+	m_height = getOwner()->getTransform()->getScale().y;
+
+	m_texture->width = m_width;
+	m_texture->height = m_height;
 
 	//Sets the sprites center to the transform origin
-	MathLibrary::Vector2(position) = MathLibrary::Vector2(transform.m02, transform.m12);
-	MathLibrary::Vector2(forward) = MathLibrary::Vector2(transform.m00, transform.m10);
-	MathLibrary::Vector2(up) = MathLibrary::Vector2(transform.m01, transform.m11);
-	MathLibrary::Vector2(position) = MathLibrary::Vector2(forward).normalize() - position * m_width / 2;
-	MathLibrary::Vector2(position) = MathLibrary::Vector2(up).normalize() - position * m_height / 2;
+	//Get the world position of the owner
+	MathLibrary::Vector2 up = { getOwner()->getTransform()->getGlobalMatrix()->m01, getOwner()->getTransform()->getGlobalMatrix()->m11 };
+	MathLibrary::Vector2 forward = getOwner()->getTransform()->getForward();
+	MathLibrary::Vector2 position = getOwner()->getTransform()->getWorldPosition();
+
+	//change the position of the sprite to be in the center of the transform
+	position = position - (forward * getWidth() / 2);
+	position = position - (up * getHeight() / 2);
+
+	//Change the position vector to be a raylib vector
+	RAYLIB_H::Vector2 rayPos = { position.x, position.y };
 
 	//Find the transform rotation in radians
-	m_rotation = atan2(transform.m10, transform.m00);
-
+	//Get the value of rotation in radians from the owner transform
+	float rotation = atan2(getOwner()->getTransform()->getGlobalMatrix()->m10, getOwner()->getTransform()->getGlobalMatrix()->m00);
+	
 	//Draw the sprite
-	DrawTextureEx(m_texture, position, m_rotation * 180 / PI, 1, WHITE);
+	RAYLIB_H::DrawTextureEx(*m_texture, rayPos, (float)(rotation * 180.0f / PI), 1, WHITE);
 }

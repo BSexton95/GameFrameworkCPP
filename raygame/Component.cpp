@@ -1,31 +1,22 @@
 #include "Component.h"
 
-Component::Component(Actor* owner, const char* componentName)
+Component::Component()
 {
+	m_owner = nullptr;
+	m_name = nullptr;
+	m_started = false;
+}
+
+void Component::assignOwner(Actor* owner)
+{
+	if (getOwner())
+		return;
+
 	m_owner = owner;
-	m_name = componentName;
 }
 
-Component::~Component()
+Component::Component(const char* name)
 {
+	m_name = name;
 }
 
-void Component::start()
-{
-}
-
-void Component::update(float deltaTime)
-{
-}
-
-void Component::draw()
-{
-}
-
-void Component::end()
-{
-}
-
-void Component::onCollision(Actor* actor)
-{
-}
