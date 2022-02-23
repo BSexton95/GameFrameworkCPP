@@ -8,7 +8,7 @@ class InputComponent :
 {
 public:
 
-	InputComponent(const char* name = "InputComponent") : Component::Component(name) {}
+	InputComponent() : Component::Component() {}
 
 	MathLibrary::Vector2 getMoveAxis();
 

@@ -50,15 +50,23 @@ public:
     /// Gets the first component instance attached to this actor 
     /// that matches the name
     /// </summary>
-    /// <param name="componentName">The name of the component instance</param>
-    Component* getComponent(const char* componentName);
+    template<typename T>
+    T* getComponent();
+
+    /// <summary>
+    /// Gets the first component instance attached to this actor 
+    /// that matches the name
+    /// </summary>
+    /// <param name="component">The name of the component instance</param>
+    Component* addComponent(Component* component);
 
     /// <summary>
     /// Adds a component to the end of the component array
     /// </summary>
     /// <param name="component">The new component to attache to the actor</param>
     /// <returns>A reference to the component added to the array</returns>
-    Component* addComponent(Component* component);
+    template<typename T>
+    T* addComponent();
 
     /// <summary>
     /// Removes the first instance found that matches the component reference 
@@ -72,7 +80,8 @@ public:
     /// </summary>
     /// <param name="component">The name of the component to remove from the array</param>
     /// <returns>False if the componenet is not in the array</returns>
-    bool removeComponent(const char* name);
+    template<typename T>
+    bool removeComponent();
 
     /// <summary>
     /// Called during the first update after an actor is added to a scene.
@@ -124,3 +133,98 @@ private:
     unsigned int m_componentCount;
 };
 
+template<typename T>
+inline T* Actor::getComponent()
+{
+    //Iterates through the component array
+    for (int i = 0; i < m_componentCount; i++)
+    {
+        T* temp = dynamic_cast<T*>(m_component[i]);
+        //Return the component if the name is the same as the current component
+        if (temp)
+            return (T*)m_component[i];
+    }
+
+    //Return nullptr if the component is not in the list
+    return nullptr;
+}
+
+template<typename T>
+inline T* Actor::addComponent()
+{
+    T* component = new T();
+    //If the component is null then return before running any other logic
+    Actor* owner = component->getOwner();
+    if (owner)
+        return nullptr;
+
+    component->assignOwner(this);
+
+    //Create a new temporary array that one size larger than the original
+    Component** tempArray = new Component * [m_componentCount + 1];
+
+    //Copy values from old array into new array
+    for (int i = 0; i < m_componentCount; i++)
+    {
+        tempArray[i] = m_component[i];
+    }
+
+    //Sets the component at the new index to be the component passed in
+    tempArray[m_componentCount] = component;
+    if (m_componentCount > 1)
+        //set old array to hold the values of the new array
+        delete[] m_component;
+    else if (m_componentCount == 1)
+        delete m_component;
+    //Set the old array to the tmeporary array
+    m_component = tempArray;
+    m_componentCount++;
+
+    return (T*)component;
+}
+
+template<typename T>
+inline bool Actor::removeComponent()
+{
+
+    bool componentRemoved = false;
+    Component* componentToDelete = nullptr;
+
+    //Create a new array with a size one less than our old array 
+    Component** newArray = new Component * [m_componentCount - 1];
+
+    //Create variable to access tempArray index
+    int j = 0;
+    //Copy values from the old array to the new array
+    for (int i = 0; i < m_componentCount; i++)
+    {
+        T* temp = dynamic_cast<T*>(m_component[i]);
+        //If the current index is not the index that needs to be removed,
+        //add the value into the old array and increment j
+        if (!temp)
+        {
+            newArray[j] = m_component[i];
+            j++;
+        }
+        else
+        {
+            delete m_component[i];
+            componentRemoved = true;
+            componentToDelete = m_component[i];
+        }
+    }
+
+    if (componentRemoved)
+    {
+        delete[] m_component;
+        //Set the old array to be the tempArray
+        m_component = newArray;
+        m_componentCount--;
+        delete componentToDelete;
+    }
+    else
+        delete[] newArray;
+
+    //Return whether or not the removal was successful
+    return componentRemoved;
+}

@@ -23,20 +23,6 @@ Actor::Actor(float x, float y, const char* name = "Actor")
     m_name = name;
 }
 
-Component* Actor::getComponent(const char* componentName)
-{
-    //Iterates through the component array
-    for (int i = 0; i < m_componentCount; i++)
-    {
-        //Return the component if the name is the same as the current component
-        if (strcmp(m_component[i]->getName(), componentName) == 0)
-            return m_component[i];
-    }
-
-    //Return nullptr if the component is not in the list
-    return nullptr;
-}
-
 Component* Actor::addComponent(Component* component)
 {
     //If the component is null then return before running any other logic
@@ -105,55 +91,6 @@ bool Actor::removeComponent(Component* component)
 
         delete component;
     } 
-    else
-        delete[] newArray;
-
-    //Return whether or not the removal was successful
-    return componentRemoved;
-}
-
-bool Actor::removeComponent(const char* name)
-{
-    //Check to see if the index is outside the bounds of our array
-    if (!name)
-    {
-        return false;
-    }
-
-    bool componentRemoved = false;
-    Component* componentToDelete = nullptr;
-
-    //Create a new array with a size one less than our old array 
-    Component** newArray = new Component * [m_componentCount - 1];
-
-    //Create variable to access tempArray index
-    int j = 0;
-    //Copy values from the old array to the new array
-    for (int i = 0; i < m_componentCount; i++)
-    {
-        //If the current index is not the index that needs to be removed,
-        //add the value into the old array and increment j
-        if (strcmp(m_component[i]->getName(), name) == 0)
-        {
-            newArray[j] = m_component[i];
-            j++;
-        }
-        else
-        {
-            delete m_component[i];
-            componentRemoved = true;
-            componentToDelete = m_component[i];
-        }
-    }
-
-    if(componentRemoved)
-    {
-        delete[] m_component;
-        //Set the old array to be the tempArray
-        m_component = newArray;
-        m_componentCount--;
-        delete componentToDelete;
-    }
     else
         delete[] newArray;
 
