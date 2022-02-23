@@ -27,7 +27,6 @@ void StartScene::update(float delatTime)
 	if (input == '1')
 	{
 		Engine::addScene(new MainScene());
-		Engine::setCurrentScene(1);
 	}
 	else if (input == '2')
 		Engine::CloseApplication();
