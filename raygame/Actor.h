@@ -3,6 +3,7 @@ class Transform2D;
 class Collider;
 class Component;
 
+
 class Actor
 {
 public:
